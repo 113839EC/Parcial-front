@@ -1,0 +1,17 @@
+{
+  "name": "parcial-front",
+  "version": "1.0.0",
+  "description": "Juego de cartas - Frontend",
+  "scripts": {
+    "api": "json-server --watch db.json --port 3000",
+    "build": "tsc",
+    "watch": "tsc --watch"
+  },
+  "dependencies": {
+    "json-server": "^0.17.4"
+  },
+  "private": true,
+  "devDependencies": {
+    "typescript": "^6.0.3"
+  }
+}
