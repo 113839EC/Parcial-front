@@ -7,6 +7,12 @@
 - **Siempre camelCase** para variables, funciones y parámetros
 - **Tipar siempre** — variables, parámetros y retornos con su tipo explícito (`string`, `number`, `boolean`, etc.)
 
+## Access Modifiers
+
+- **Always use `private`** for class members not exposed outside the class
+- **Never expose as `public` what doesn't need to be** — default to `private`, promote only when necessary
+- **Review every class property and method** — wrong visibility is a bug
+
 ## Language
 
 - **All code and documentation in English** — variable names, comments, function names, file names, docs
