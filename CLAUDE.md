@@ -4,7 +4,9 @@
 
 - Proyecto en **TypeScript** — todos los archivos en `scripts/`, compilados a `dist/`
 - **Nunca usar `var`** — solo `const` o `let`
-- **Siempre camelCase** para variables, funciones y parámetros
+- **camelCase** for variables and parameters — `playerScore`, `currentRound`
+- **PascalCase** for functions — `GetCards()`, `UpdateState()`
+- **UPPER_SNAKE_CASE** for static/constant values — `MAX_ROUNDS`, `API_URL`
 - **Tipar siempre** — variables, parámetros y retornos con su tipo explícito (`string`, `number`, `boolean`, etc.)
 
 ## Access Modifiers
