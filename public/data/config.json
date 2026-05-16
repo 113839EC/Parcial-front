@@ -1,0 +1,23 @@
+{
+  "variants": [
+    {
+      "id": "default",
+      "name": "Configuración estándar",
+      "playerRow": ["ROCA", "ROCA", "ROCA", "ESPINA", "ESPINA", "ESPINA", "BRUMA", "BRUMA"],
+      "machineRow": ["BRUMA", "BRUMA", "ESPINA", "ESPINA", "ESPINA", "ROCA", "ROCA", "ROCA"]
+    },
+    {
+      "id": "aggressive",
+      "name": "Agresiva (más Espinas)",
+      "playerRow": ["ESPINA", "ESPINA", "ESPINA", "ESPINA", "ROCA", "ROCA", "ROCA", "BRUMA"],
+      "machineRow": ["BRUMA", "ROCA", "ROCA", "ROCA", "ESPINA", "ESPINA", "ESPINA", "ESPINA"]
+    },
+    {
+      "id": "misty",
+      "name": "Brumosa (más Brumas)",
+      "playerRow": ["BRUMA", "BRUMA", "BRUMA", "BRUMA", "ROCA", "ROCA", "ESPINA", "ESPINA"],
+      "machineRow": ["ESPINA", "ESPINA", "ROCA", "ROCA", "BRUMA", "BRUMA", "BRUMA", "BRUMA"]
+    }
+  ],
+  "difficulty": ["EASY", "HARD"]
+}

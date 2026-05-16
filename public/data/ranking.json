@@ -1,0 +1,14 @@
+{
+  "ranking": [
+    {
+      "id": "9ba1bdb9-c1cb-4522-8f60-f4f2a7a1108a",
+      "playerName": "Emanuel",
+      "playerScore": 20,
+      "machineScore": -65,
+      "winner": "PLAYER",
+      "turns": 100,
+      "difficulty": "EASY",
+      "date": "2026-05-16T14:14:53.887Z"
+    }
+  ]
+}

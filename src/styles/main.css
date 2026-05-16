@@ -1,0 +1,184 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Screens ─────────────────────────────────────────── */
+.screen { display: none; }
+.screen.active { display: flex; }
+
+/* ── Board ───────────────────────────────────────────── */
+#board-container {
+  @apply grid gap-0 border-2 border-slate-600 rounded-md overflow-hidden;
+  grid-template-columns: repeat(8, 1fr);
+  aspect-ratio: 1;
+  max-width: 480px;
+  width: 100%;
+}
+
+.cell {
+  @apply relative flex items-center justify-center cursor-pointer select-none transition-colors duration-150;
+  aspect-ratio: 1;
+}
+.cell-dark  { @apply bg-slate-700; }
+.cell-light { @apply bg-slate-600; }
+.cell:hover { @apply brightness-125; }
+.cell:focus { @apply outline-none ring-2 ring-yellow-400 ring-inset z-10; }
+
+/* ── Cell states ─────────────────────────────────────── */
+.cell-selected { @apply ring-2 ring-white ring-inset bg-yellow-500/20 !important; }
+.cell-move     { @apply bg-blue-500/40; }
+.cell-attack   { @apply bg-red-500/40; }
+.cell-mutate   { @apply bg-purple-500/40 animate-[pulseRing_1s_ease-in-out_infinite]; }
+.cell-invalid  { @apply bg-red-700/60; }
+
+/* ── Pieces ──────────────────────────────────────────── */
+.piece {
+  @apply flex items-center justify-center rounded-full w-[78%] h-[78%] font-bold text-white shadow-md;
+  font-size: clamp(0.55rem, 1.8vw, 1rem);
+  pointer-events: none;
+  transition: transform 0.25s ease;
+}
+.piece-player  { @apply bg-blue-600 border-2 border-blue-300; }
+.piece-machine { @apply bg-red-700  border-2 border-red-400; }
+.piece-icon    { font-size: 1.1em; }
+
+/* ── Animations ──────────────────────────────────────── */
+.anim-move .piece  { animation: moveSlide 0.25s ease; }
+@keyframes moveSlide {
+  0%   { transform: scale(0.7); opacity: 0.4; }
+  100% { transform: scale(1);   opacity: 1;   }
+}
+
+.anim-attack { animation: flashRed 0.3s ease-in-out; }
+@keyframes flashRed {
+  0%, 100% { background-color: transparent; }
+  50%       { background-color: rgba(239,68,68,0.8); }
+}
+
+.anim-mutate .piece { animation: spinOnce 0.35s ease-in-out; }
+@keyframes spinOnce {
+  0%   { transform: rotate(0deg)   scale(1);   }
+  50%  { transform: rotate(180deg) scale(1.3); }
+  100% { transform: rotate(360deg) scale(1);   }
+}
+
+/* Board shake on invalid action */
+.board-shake { animation: shake 0.3s ease; }
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-4px); }
+  75%       { transform: translateX(4px); }
+}
+
+/* Board disabled (machine turn) */
+.board-disabled { @apply pointer-events-none opacity-80; }
+
+/* ── Game panel ──────────────────────────────────────── */
+.game-panel {
+  @apply flex flex-col gap-4 bg-slate-800 rounded-lg p-4 min-w-[200px];
+}
+.panel-section {
+  @apply bg-slate-700/50 rounded-md p-3;
+}
+.panel-label {
+  @apply text-xs text-slate-400 uppercase tracking-wider mb-1;
+}
+.panel-value {
+  @apply text-lg font-bold text-white;
+}
+
+/* ── Buttons ─────────────────────────────────────────── */
+.btn-primary {
+  @apply w-full py-3 px-6 bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold rounded-lg
+         transition-colors focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-slate-900;
+}
+.btn-secondary {
+  @apply w-full py-2 px-4 bg-slate-600 hover:bg-slate-500 active:bg-slate-700 text-white rounded-lg
+         transition-colors focus:outline-none focus:ring-2 focus:ring-slate-400;
+}
+.btn-danger {
+  @apply py-2 px-4 bg-red-700 hover:bg-red-600 active:bg-red-800 text-white rounded-lg text-sm
+         transition-colors focus:outline-none focus:ring-2 focus:ring-red-400;
+}
+.btn-retry {
+  @apply ml-2 px-3 py-1 bg-yellow-600 hover:bg-yellow-500 text-white text-xs rounded;
+}
+
+/* ── Form ────────────────────────────────────────────── */
+.form-label { @apply block text-sm font-medium text-slate-300 mb-1; }
+.form-input {
+  @apply w-full bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-2
+         focus:outline-none focus:ring-2 focus:ring-blue-400 focus:border-transparent;
+}
+.form-select {
+  @apply w-full bg-slate-700 border border-slate-600 text-white rounded-md px-3 py-2
+         focus:outline-none focus:ring-2 focus:ring-blue-400;
+}
+
+/* ── Status messages ─────────────────────────────────── */
+.ui-loading {
+  @apply flex items-center gap-2 text-sm text-slate-400;
+}
+.spinner {
+  @apply w-4 h-4 animate-spin;
+}
+.ui-success { @apply text-sm text-green-400; }
+.ui-error   { @apply text-sm text-red-400; }
+
+/* ── Action history ──────────────────────────────────── */
+.history-list { @apply flex flex-col gap-1 max-h-36 overflow-y-auto; }
+.history-item { @apply text-xs text-slate-400 truncate; }
+.history-item.player-action  { @apply text-blue-300; }
+.history-item.machine-action { @apply text-red-300; }
+
+/* ── Invalid action message ──────────────────────────── */
+#invalid-action-msg {
+  @apply text-sm text-yellow-300 min-h-[1.2rem] font-medium;
+}
+
+/* ── Ranking table ───────────────────────────────────── */
+.ranking-table {
+  @apply w-full text-sm border-collapse;
+}
+.ranking-table th {
+  @apply text-left py-2 px-3 bg-slate-700 text-slate-300 font-semibold border-b border-slate-600;
+}
+.ranking-table td {
+  @apply py-2 px-3 border-b border-slate-700 text-slate-200;
+}
+.ranking-table tr:hover td { @apply bg-slate-700/40; }
+
+/* ── Responsive ──────────────────────────────────────── */
+.game-layout {
+  @apply flex flex-col lg:flex-row gap-6 items-start justify-center w-full;
+}
+
+@media (min-width: 640px) {
+  .game-layout { @apply flex-row; }
+  #board-container { max-width: 420px; }
+}
+
+@media (min-width: 1024px) {
+  #board-container { max-width: 480px; }
+  .game-panel { min-width: 240px; }
+}
+
+/* ── Accessibility ───────────────────────────────────── */
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border-width: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-move .piece,
+  .anim-attack,
+  .anim-mutate .piece,
+  .board-shake,
+  .spinner { animation: none !important; transition: none !important; }
+}
+
+/* ── Type badges (matchup reference) ────────────────── */
+.type-roca   { @apply inline-block bg-gray-600  text-gray-100 text-xs px-1.5 py-0.5 rounded; }
+.type-espina { @apply inline-block bg-green-700 text-green-100 text-xs px-1.5 py-0.5 rounded; }
+.type-bruma  { @apply inline-block bg-indigo-700 text-indigo-100 text-xs px-1.5 py-0.5 rounded; }

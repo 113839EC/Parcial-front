@@ -3,14 +3,204 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Juego de Cartas</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="styles/index.css" />
+  <title>Dominio — Juego de Estrategia</title>
+  <script type="module" src="/src/main.js"></script>
 </head>
-<body>
+<body class="bg-slate-900 text-slate-100 min-h-screen font-sans antialiased">
 
-  <!-- TODO: contenido -->
+  <!-- ── Start Screen ─────────────────────────────────── -->
+  <div id="start-screen" class="screen min-h-screen items-center justify-center p-6">
+    <div class="w-full max-w-md space-y-6">
 
-  <script src="dist/index.js"></script>
+      <div class="text-center">
+        <h1 class="text-5xl font-black tracking-widest text-white mb-2">DOMINIO</h1>
+        <p class="text-slate-400 text-sm">Juego de estrategia por turnos · Jugador vs Máquina</p>
+      </div>
+
+      <!-- Matchup reference -->
+      <div class="bg-slate-800 rounded-lg p-3 text-xs text-slate-400 text-center space-y-1">
+        <p class="font-semibold text-slate-300 mb-1">Ciclo de dominancia</p>
+        <p><span class="type-roca">Roca⬟</span> vence <span class="type-bruma">Bruma◎</span> · <span class="type-espina">Espina✦</span> vence <span class="type-roca">Roca⬟</span> · <span class="type-bruma">Bruma◎</span> vence <span class="type-espina">Espina✦</span></p>
+        <p>Mutación: <span class="text-purple-300">Roca→Espina→Bruma→Roca</span> (cuesta 2⚡, −5 pts)</p>
+      </div>
+
+      <div id="config-status" aria-live="polite" class="min-h-5"></div>
+
+      <form id="start-form" class="space-y-4">
+        <div>
+          <label for="player-name" class="form-label">Tu nombre</label>
+          <input id="player-name" type="text" class="form-input" placeholder="Jugador" maxlength="30"
+                 autocomplete="nickname" />
+        </div>
+
+        <div>
+          <label for="variant" class="form-label">Variante de tablero</label>
+          <select id="variant" class="form-select">
+            <option value="default">Estándar</option>
+          </select>
+        </div>
+
+        <div>
+          <label for="difficulty" class="form-label">Dificultad</label>
+          <select id="difficulty" class="form-select">
+            <option value="EASY">Fácil — IA aleatoria</option>
+            <option value="HARD">Difícil — IA heurística</option>
+          </select>
+        </div>
+
+        <button type="submit" id="start-btn" class="btn-primary">
+          ▶ Comenzar partida
+        </button>
+      </form>
+
+      <button id="ranking-btn" class="btn-secondary">
+        🏆 Ver ranking
+      </button>
+    </div>
+  </div>
+
+  <!-- ── Game Screen ───────────────────────────────────── -->
+  <div id="game-screen" class="screen min-h-screen flex-col items-center p-4 md:p-6">
+
+    <div class="game-layout w-full max-w-5xl">
+
+      <!-- Board -->
+      <div class="flex-shrink-0">
+        <!-- Col labels -->
+        <div class="grid grid-cols-8 max-w-[480px] w-full mb-0.5 px-0" aria-hidden="true">
+          <div class="text-center text-xs text-slate-500">A</div>
+          <div class="text-center text-xs text-slate-500">B</div>
+          <div class="text-center text-xs text-slate-500">C</div>
+          <div class="text-center text-xs text-slate-500">D</div>
+          <div class="text-center text-xs text-slate-500">E</div>
+          <div class="text-center text-xs text-slate-500">F</div>
+          <div class="text-center text-xs text-slate-500">G</div>
+          <div class="text-center text-xs text-slate-500">H</div>
+        </div>
+        <section id="board-container" aria-label="Tablero Dominio 8×8"></section>
+        <p class="text-xs text-slate-500 mt-1 text-center">
+          Clic para seleccionar · Enter/Espacio confirmar · Esc cancelar · ↑↓←→ navegar
+        </p>
+      </div>
+
+      <!-- Panel -->
+      <aside class="game-panel w-full lg:w-auto" aria-label="Panel de juego">
+
+        <div class="panel-section">
+          <div class="panel-label">Turno</div>
+          <div class="flex items-center gap-2">
+            <span id="turn-counter" class="panel-value">1</span>
+            <span class="text-slate-500 text-sm">/ 100</span>
+          </div>
+          <!-- Progress bar -->
+          <div class="mt-2 h-1 bg-slate-600 rounded-full overflow-hidden">
+            <div id="turn-progress" class="h-full bg-blue-500 transition-all duration-300" style="width:0%"></div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-label">Turno activo</div>
+          <div id="active-player" class="panel-value text-blue-300">Tú</div>
+        </div>
+
+        <div class="panel-section grid grid-cols-2 gap-3">
+          <div>
+            <div class="panel-label text-blue-300">Tú</div>
+            <div class="text-xl font-bold text-white"><span id="player-score">0</span> pts</div>
+            <div class="text-xs text-slate-400 mt-1">⚡ <span id="player-energy">5</span>/10 · <span id="player-pieces">8</span> piezas</div>
+          </div>
+          <div>
+            <div class="panel-label text-red-300">Máquina</div>
+            <div class="text-xl font-bold text-white"><span id="machine-score">0</span> pts</div>
+            <div class="text-xs text-slate-400 mt-1">⚡ <span id="machine-energy">5</span>/10 · <span id="machine-pieces">8</span> piezas</div>
+          </div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-label">Acción inválida</div>
+          <div id="invalid-action-msg" aria-live="assertive" class="min-h-[1rem]"></div>
+        </div>
+
+        <div class="panel-section">
+          <div class="panel-label">Historial</div>
+          <div id="action-history" class="history-list" aria-live="polite"></div>
+        </div>
+
+        <div class="panel-section text-xs text-slate-400 space-y-1">
+          <p class="font-semibold text-slate-300">Matchup</p>
+          <p><span class="type-roca">R⬟</span> → <span class="type-bruma">B◎</span> &nbsp; <span class="type-espina">E✦</span> → <span class="type-roca">R⬟</span> &nbsp; <span class="type-bruma">B◎</span> → <span class="type-espina">E✦</span></p>
+        </div>
+
+        <button id="surrender-btn" class="btn-danger w-full">
+          ⚑ Rendirse
+        </button>
+
+      </aside>
+    </div>
+  </div>
+
+  <!-- ── Result Screen ─────────────────────────────────── -->
+  <div id="result-screen" class="screen min-h-screen items-center justify-center p-6">
+    <div class="w-full max-w-lg space-y-6">
+
+      <div class="text-center">
+        <h2 id="result-title" class="text-4xl font-black text-white mb-2">Resultado</h2>
+      </div>
+
+      <div class="bg-slate-800 rounded-lg p-4">
+        <div class="grid grid-cols-2 gap-4 text-center mb-4">
+          <div>
+            <div class="text-blue-300 text-sm font-semibold">Tu puntaje</div>
+            <div id="result-player-score" class="text-3xl font-black text-white">0</div>
+          </div>
+          <div>
+            <div class="text-red-300 text-sm font-semibold">Máquina</div>
+            <div id="result-machine-score" class="text-3xl font-black text-white">0</div>
+          </div>
+        </div>
+
+        <div id="result-breakdown" class="mt-4"></div>
+      </div>
+
+      <div class="flex flex-col gap-3">
+        <button id="play-again-btn" class="btn-primary">▶ Jugar de nuevo</button>
+        <button id="result-ranking-btn" class="btn-secondary">🏆 Ver ranking</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Ranking Screen ────────────────────────────────── -->
+  <div id="ranking-screen" class="screen min-h-screen flex-col items-center p-6">
+    <div class="w-full max-w-3xl space-y-4">
+
+      <div class="flex items-center gap-4">
+        <button id="ranking-back-btn" class="btn-secondary w-auto px-4">← Volver</button>
+        <h2 class="text-2xl font-bold text-white">🏆 Ranking</h2>
+      </div>
+
+      <div id="ranking-status" aria-live="polite" class="min-h-5"></div>
+
+      <div class="bg-slate-800 rounded-lg overflow-x-auto">
+        <table class="ranking-table" aria-label="Tabla de ranking de las últimas partidas">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Jugador</th>
+              <th>Puntaje</th>
+              <th>Ganador</th>
+              <th>Dificultad</th>
+              <th>Turnos</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-tbody">
+            <tr><td colspan="7" class="text-center text-slate-500 py-4">Cargando…</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </div>
+
 </body>
 </html>
